@@ -70,13 +70,17 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x android/gradlew
 
-      - name: Assemble debug APK
-        working-directory: android
-        run: ./gradlew assembleDebug --no-daemon --stacktrace
+      - name: Generate JS bundle
+        run: mkdir -p android/app/src/main/assets
+      - name: Bundle JS
+        run: npx react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle
 
-      - name: Upload APK
+      - name: Assemble release APK
+        working-directory: android
+        run: ./gradlew assembleRelease --no-daemon --stacktrace
+      - name: Upload Release APK
         uses: actions/upload-artifact@v4
         with:
-          name: sanna-debug-apk
-          path: android/app/build/outputs/apk/debug/*.apk
+          name: sanna-release-apk
+          path: android/app/build/outputs/apk/release/*.apk
           if-no-files-found: error
